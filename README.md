@@ -1,6 +1,3 @@
-This repository is established for the sole purpose of researching and working with GeoLayoutLM. 
-The author's source code is available at the following link: https://github.com/AlibabaResearch/AdvancedLiterateMachinery
-=======================================================================
 # GeoLayoutLM: Geometric Pre-training for Visual Information Extraction
 The official PyTorch implementation of GeoLayoutLM (CVPR 2023 highlight).
 
