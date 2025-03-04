@@ -2,6 +2,7 @@ import os
 import torch
 from pytorch_lightning import Trainer
 from pytorch_lightning.utilities.seed import seed_everything
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 from lightning_modules.data_modules.vie_data_module import VIEDataModule
 from lightning_modules.geolayoutlm_vie_module import GeoLayoutLMVIEModule
@@ -9,7 +10,15 @@ from utils import get_callbacks, get_config, get_loggers, get_plugins
 
 
 def main():
-    # torch.cuda.set_per_process_memory_fraction(0.7)
+    torch.set_float32_matmul_precision('medium')
+    
+    checkpoint_callback = ModelCheckpoint(
+        save_top_k=5,
+        monitor="f1",
+        mode="max",
+        dirpath="checkpoints/",
+        filename="geo-{epoch:02d}-{f1:.2f}",
+    )
     cfg = get_config()
     print(cfg)
 
@@ -20,6 +29,7 @@ def main():
     plugins = get_plugins(cfg)
     loggers = get_loggers(cfg)
 
+    callbacks.append(checkpoint_callback)
     trainer = Trainer(
         accelerator=cfg.train.accelerator,
         # gpus=torch.cuda.device_count(),

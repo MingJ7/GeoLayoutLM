@@ -54,7 +54,6 @@ class GeoLayoutLMVIEModel(nn.Module):
             "alibaba-damo/geolayoutlm-large-uncased",
         ]:
             self._init_weight()
-        torch.cuda.empty_cache()
     
     def _init_weight(self):
         model_path = self.model_cfg.model_ckpt
@@ -89,7 +88,6 @@ class GeoLayoutLMVIEModel(nn.Module):
 
         self.pair_geometric_head = load_model(self.pair_geometric_head, pair_geometric_head_dict)
         self.multi_pairs_geometric_head = load_model(self.multi_pairs_geometric_head, multi_pairs_geometric_head_dict)
-        torch.cuda.empty_cache()
 
         return 0
 
@@ -144,7 +142,6 @@ class GeoLayoutLMVIEModel(nn.Module):
             bio_text_mm_feat = self.dropout(text_mm_feat)
             logits4labeling = self.bio_classifier(bio_text_mm_feat) # [batch_size, seq_len, nc]
         
-        torch.cuda.empty_cache()
         # RE
         batch_size, blk_len = first_token_idxes.shape
         B_batch_dim = torch.arange(0, batch_size,
@@ -167,7 +164,6 @@ class GeoLayoutLMVIEModel(nn.Module):
             logits4linking_ref = self.multi_pairs_geometric_head(mixed_blk_features, logits4linking, first_token_idxes_mask)
             logits4linking_list.append(logits4linking_ref)
 
-        torch.cuda.empty_cache()
         # output and loss
         head_outputs = {
             "logits4labeling": logits4labeling,
@@ -184,7 +180,6 @@ class GeoLayoutLMVIEModel(nn.Module):
             torch.ones_like(head_outputs["logits4linking_list"][-1]),
             torch.zeros_like(head_outputs["logits4linking_list"][-1]))
         losses = self._get_loss(head_outputs, batch)
-        torch.cuda.empty_cache()
 
         return head_outputs, losses
 
@@ -218,8 +213,6 @@ class GeoLayoutLMVIEModel(nn.Module):
             var_p = var_p.mean()
             
             linking_loss = linking_loss + (linking_loss_all + linking_loss_positive + var_p)
-        print(torch.cuda.memory_summary())
-        torch.cuda.empty_cache()
         loss_dict = {
             "labeling_loss": labeling_loss,
             "linking_loss": linking_loss,
@@ -259,5 +252,4 @@ def load_model(model, state_dict):
     if len(error_msgs) > 0:
         raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
                            model.__class__.__name__, "\n\t".join(error_msgs)))
-    torch.cuda.empty_cache()
     return model

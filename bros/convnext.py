@@ -153,7 +153,6 @@ model_urls = {
     "convnext_xlarge_22k": "https://dl.fbaipublicfiles.com/convnext/convnext_xlarge_22k_224.pth",
 }
 
-print("registering models in ", __name__)
 @register_model
 def convnext_tiny(pretrained=False,in_22k=False, **kwargs):
     model = ConvNeXt(depths=[3, 3, 9, 3], dims=[96, 192, 384, 768], **kwargs)
