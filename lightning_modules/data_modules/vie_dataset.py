@@ -108,8 +108,8 @@ class VIEDataset(Dataset):
         return_dict["first_token_idxes"] = np.zeros(self.max_block_num, dtype=int)
         return_dict["block_mask"] = np.zeros(self.max_block_num, dtype=int)
         return_dict["bbox"] = np.zeros((self.max_seq_length, 4), dtype=np.float32)
-        return_dict["line_rank_id"] = np.zeros(self.max_seq_length, dtype="int32")
-        return_dict["line_rank_inner_id"] = np.ones(self.max_seq_length, dtype="int32")
+        return_dict["line_rank_id"] = np.zeros(self.max_seq_length, dtype=int)
+        return_dict["line_rank_inner_id"] = np.ones(self.max_seq_length, dtype=int)
 
         return_dict["are_box_first_tokens"] = np.zeros(self.max_seq_length, dtype=np.bool_)
         return_dict["bio_labels"] = np.zeros(self.max_seq_length, dtype=int)

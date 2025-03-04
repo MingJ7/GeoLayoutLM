@@ -1,1 +1,8 @@
 .idea
+.v
+.venv
+*.pyc
+preprocess/funsd_el/dataset
+preprocess/funsd_el/funsd_geo
+tensorboard_logs
+checkpoints

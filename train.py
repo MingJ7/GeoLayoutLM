@@ -9,6 +9,7 @@ from utils import get_callbacks, get_config, get_loggers, get_plugins
 
 
 def main():
+    # torch.cuda.set_per_process_memory_fraction(0.7)
     cfg = get_config()
     print(cfg)
 
@@ -21,7 +22,8 @@ def main():
 
     trainer = Trainer(
         accelerator=cfg.train.accelerator,
-        gpus=torch.cuda.device_count(),
+        # gpus=torch.cuda.device_count(),
+        devices=1,
         max_epochs=cfg.train.max_epochs,
         gradient_clip_val=cfg.train.clip_gradient_value,
         gradient_clip_algorithm=cfg.train.clip_gradient_algorithm,
@@ -32,7 +34,7 @@ def main():
         detect_anomaly=False,
         replace_sampler_ddp=False,
         move_metrics_to_cpu=False,
-        progress_bar_refresh_rate=0,
+        # progress_bar_refresh_rate=0,
         check_val_every_n_epoch=cfg.train.val_interval,
         logger=loggers,
         benchmark=cfg.cudnn_benchmark,
