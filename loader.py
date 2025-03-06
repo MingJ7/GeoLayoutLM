@@ -16,6 +16,8 @@ def getitem_geo(img: Image, tokenizer: AutoTokenizer):
     # Extract words, confidence, and bounding boxes
     words = ocr_data["text"]
     confidences = ocr_data["conf"]
+    block = ocr_data["block_num"]
+    para = ocr_data["par_num"]
     # bounding_boxes = list(
     #     zip(ocr_data["left"], ocr_data["top"], ocr_data["width"], ocr_data["height"])
     # )
