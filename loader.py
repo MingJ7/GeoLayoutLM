@@ -9,6 +9,9 @@ import itertools
 
 max_seq_length = 512
 max_connections = 100
+max_block_num=256
+img_h=768
+img_w=768
 
 def getitem_geo(img: Image, tokenizer: AutoTokenizer):
     # Perform OCR with detailed output
@@ -16,8 +19,9 @@ def getitem_geo(img: Image, tokenizer: AutoTokenizer):
     # Extract words, confidence, and bounding boxes
     words = ocr_data["text"]
     confidences = ocr_data["conf"]
-    block = ocr_data["block_num"]
-    para = ocr_data["par_num"]
+    blocks = ocr_data["block_num"]
+    paras = ocr_data["par_num"]
+    word_nums = ocr_data["word_num"]
     # bounding_boxes = list(
     #     zip(ocr_data["left"], ocr_data["top"], ocr_data["width"], ocr_data["height"])
     # )
@@ -35,6 +39,11 @@ def getitem_geo(img: Image, tokenizer: AutoTokenizer):
     ]
     processed_data['blocks']['first_token_idx_list'] = []
     processed_data['blocks']['boxes'] = []
+    idx = 0
+    for block, para, word_num, word, bbox in zip(blocks, paras, word_nums, words, bounding_boxes):
+        if (para == 0 and block !=0): processed_data['blocks']['boxes'].append()
+        if (word_num == 1): processed_data['blocks']['first_token_idx_list'].append(idx)
+        if (not word.strip()): idx += 1
     return_dict = {}
 
     width, height = img.size
@@ -169,10 +178,10 @@ def getitem_geo(img: Image, tokenizer: AutoTokenizer):
     bbox_4p_normalized[:, [0, 2, 4, 6]] = bbox_4p_normalized[:, [0, 2, 4, 6]] / width
     bbox_4p_normalized[:, [1, 3, 5, 7]] = bbox_4p_normalized[:, [1, 3, 5, 7]] / height
 
-    if backbone_type == "layoutlm":
-        bbox_4p_normalized = bbox_4p_normalized[:, [0, 1, 4, 5]]
-        bbox_4p_normalized = bbox_4p_normalized * 1000
-        bbox_4p_normalized = bbox_4p_normalized.astype(int)
+    # if backbone_type == "layoutlm":
+    #     bbox_4p_normalized = bbox_4p_normalized[:, [0, 1, 4, 5]]
+    #     bbox_4p_normalized = bbox_4p_normalized * 1000
+    #     bbox_4p_normalized = bbox_4p_normalized.astype(int)
 
     return_dict["bbox_4p_normalized"] = bbox_4p_normalized
     bbox = return_dict["bbox"]
